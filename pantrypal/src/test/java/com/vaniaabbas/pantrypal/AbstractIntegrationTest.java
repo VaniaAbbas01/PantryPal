@@ -1,9 +1,8 @@
 package com.vaniaabbas.pantrypal;
 
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 /**
@@ -12,10 +11,18 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
  * are exercised exactly as in production. Requires a running Docker daemon.
  */
 @SpringBootTest
-@Testcontainers
 public abstract class AbstractIntegrationTest {
 
-    @Container
-    @ServiceConnection
     static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:17");
+
+    static {
+        POSTGRES.start();
+    }
+
+    @DynamicPropertySource
+    static void configureDataSource(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
+        registry.add("spring.datasource.username", POSTGRES::getUsername);
+        registry.add("spring.datasource.password", POSTGRES::getPassword);
+    }
 }
