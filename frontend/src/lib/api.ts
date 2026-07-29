@@ -19,6 +19,27 @@ export interface LoginRequest {
   password: string
 }
 
+export interface PantryItem {
+  id: number
+  name: string
+  quantity: number | null
+  unit: string | null
+  category: string | null
+  expiresAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreatePantryItemRequest {
+  name: string
+  quantity?: number
+  unit?: string
+  category?: string
+  expiresAt?: string
+}
+
+export type UpdatePantryItemRequest = CreatePantryItemRequest
+
 /** Mirrors the backend RFC 7807 ProblemDetail responses. */
 export class ApiError extends Error {
   readonly status: number
@@ -74,3 +95,56 @@ export const authApi = {
   login: (body: LoginRequest) =>
     request<TokenResponse>('/api/auth/login', { method: 'POST', body: JSON.stringify(body) }),
 }
+
+export const pantryApi = {
+  list: () => request<PantryItem[]>('/api/pantry'),
+  get: (id: number) => request<PantryItem>(`/api/pantry/${id}`),
+  create: (body: CreatePantryItemRequest) =>
+    request<PantryItem>('/api/pantry', { method: 'POST', body: JSON.stringify(body) }),
+  update: (id: number, body: UpdatePantryItemRequest) =>
+    request<PantryItem>(`/api/pantry/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+  delete: (id: number) => request<void>(`/api/pantry/${id}`, { method: 'DELETE' }),
+}
+
+export interface RecipeMatch {
+  id: number
+  title: string
+  description: string
+  prepTimeMinutes: number
+  cookTimeMinutes: number
+  servings: number
+  difficulty: string
+  matchedIngredients: string[]
+  missingIngredients: string[]
+  matchPercentage: number
+  canMake: boolean
+}
+
+export interface RecipeIngredientDetail {
+  id: number
+  name: string
+  quantity: number | null
+  unit: string | null
+  isOptional: boolean
+  isAvailable: boolean
+}
+
+export interface RecipeDetail {
+  id: number
+  title: string
+  description: string
+  instructions: string
+  prepTimeMinutes: number
+  cookTimeMinutes: number
+  servings: number
+  difficulty: string
+  ingredients: RecipeIngredientDetail[]
+  matchPercentage: number
+  canMake: boolean
+}
+
+export const recipeApi = {
+  findMatching: () => request<RecipeMatch[]>('/api/recipes/match'),
+  getDetail: (id: number) => request<RecipeDetail>(`/api/recipes/${id}`),
+}
+

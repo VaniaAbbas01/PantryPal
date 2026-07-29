@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute, PublicOnlyRoute } from './components/ProtectedRoute'
-import { HomePage } from './pages/HomePage'
+import { Layout } from './components/Layout'
+import { PantryPage } from './pages/PantryPage'
+import { RecipesPage } from './pages/RecipesPage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 
@@ -12,7 +14,11 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<HomePage />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<PantryPage />} />
+          <Route path="/pantry" element={<PantryPage />} />
+          <Route path="/recipes" element={<RecipesPage />} />
+        </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
