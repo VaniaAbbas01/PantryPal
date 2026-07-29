@@ -144,10 +144,10 @@ function RecipeDetailModal({
               </Stack>
             </Stack>
 
-            <Stack gap={3}>
+            <Stack gap={2}>
               <Heading size="md">Instructions</Heading>
               <Box p={4} bg="bg.subtle" borderRadius="xl" whiteSpace="pre-line" lineHeight="relaxed">
-                {recipe.instructions}
+                {recipe.instructions.replace(/\\n/g, "\n")}
               </Box>
             </Stack>
 
